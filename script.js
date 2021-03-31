@@ -1,9 +1,13 @@
+// let submit = document
+//   .getElementById('submit')
+//   .addEventListener('click', getStats);
 let dataArr = [];
 var data = {
   header: ['Weapon', 'Number of Times Used'],
   rows: [],
 };
 
+// fetch function to retrieve crime data from FBI API
 function getStats() {
   fetch(
     'https://api.usa.gov/crime/fbi/sapi/api/data/nibrs/homicide-offenses/offense/national/WEAPONS?API_KEY=ZzVVKGxH8p4Fcd0fpa4o5QLBSUnGT0N18jao0Jv1'
@@ -11,6 +15,7 @@ function getStats() {
     .then(response => response.json())
     .then(result => {
       let allData = result.results;
+      //   loop through results and only return JSON data that has a data year greater than or equal to 2000
       for (let i = 0; i < allData.length; i++) {
         if (allData[i].data_year >= 2000) {
           dataArr.push(allData[i]);
@@ -22,9 +27,10 @@ function getStats() {
 }
 
 function sortData(dataArr) {
+  //   let yearSelection = document.getElementById('yearInput');
   let newArr = [];
   for (let j = 0; j < dataArr.length; j++) {
-    if (dataArr[j].data_year == 2019) {
+    if (dataArr[j].data_year == 2018) {
       newArr.push(dataArr[j]);
     }
   }
@@ -54,11 +60,22 @@ function displayData(result) {
   }
 
   data.rows.pop();
+
+  function compareSecondColumn(a, b) {
+    if (a[1] === b[1]) {
+      return 0;
+    } else {
+      return b[1] < a[1] ? -1 : 1;
+    }
+  }
+
+  let sortedData = data.rows.sort(compareSecondColumn);
+
   console.log(data.rows);
 
   var chart = anychart.bar();
 
-  chart.data(data);
+  chart.data(sortedData);
 
   chart.title('Most Frequently Used Weapons For All Homicides in 2019');
 
